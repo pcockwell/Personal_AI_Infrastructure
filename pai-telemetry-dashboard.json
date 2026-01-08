@@ -1,0 +1,1368 @@
+{
+  "title": "PAI / Claude Code Telemetry",
+  "description": "Comprehensive observability dashboard for Personal AI Infrastructure (PAI) and Claude Code telemetry. Monitors sessions, tool usage, subagent performance, skill usage, and token consumption patterns.",
+  "widgets": [
+    {
+      "id": 3004030479316801,
+      "definition": {
+        "title": "Overview",
+        "background_color": "vivid_blue",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 5339642489446923,
+            "definition": {
+              "title": "Sessions Started (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "started",
+                      "data_source": "metrics",
+                      "query": "sum:claude.session.started{$env,$service,$user}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "started"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "precision": 0
+            }
+          },
+          {
+            "id": 3015093975192993,
+            "definition": {
+              "title": "Tool Calls (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "tool_calls",
+                      "data_source": "metrics",
+                      "query": "sum:claude.tool.calls{$env,$service,$user}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "tool_calls"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "precision": 0
+            }
+          },
+          {
+            "id": 1984346650668587,
+            "definition": {
+              "title": "Subagents Spawned (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "spawned",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.spawned{$env,$service,$user}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "spawned"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "precision": 0
+            }
+          },
+          {
+            "id": 1909285217311227,
+            "definition": {
+              "title": "Skills Invoked (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "skills",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "skills"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "precision": 0
+            }
+          },
+          {
+            "id": 1319856115113194,
+            "definition": {
+              "title": "Workflows Triggered (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "workflows",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.workflow.triggered{$env,$service,$user}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "workflows"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "precision": 0
+            }
+          },
+          {
+            "id": 3375736795836606,
+            "definition": {
+              "title": "Total Tokens (24h)",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "total_tokens",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.total{$env,$service,$user}",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "total_tokens"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "custom_unit": "tok",
+              "precision": 0
+            }
+          },
+          {
+            "id": 2108621084314831,
+            "definition": {
+              "title": "Cache Hit Rate",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "cache_read",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.cache_read{$env,$service,$user}",
+                      "aggregator": "sum"
+                    },
+                    {
+                      "name": "total",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.total{$env,$service,$user}",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "(cache_read / total) * 100"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": false,
+              "custom_unit": "%",
+              "precision": 1
+            }
+          },
+          {
+            "id": 2837971427500941,
+            "definition": {
+              "title": "Avg Subagent Duration",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_value",
+              "requests": [
+                {
+                  "response_format": "scalar",
+                  "queries": [
+                    {
+                      "name": "duration",
+                      "data_source": "metrics",
+                      "query": "avg:claude.subagent.duration_ms{$env,$service,$user}",
+                      "aggregator": "avg"
+                    }
+                  ],
+                  "formulas": [
+                    {
+                      "formula": "duration / 1000"
+                    }
+                  ]
+                }
+              ],
+              "autoscale": true,
+              "custom_unit": "s",
+              "precision": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 1367319233732451,
+      "definition": {
+        "title": "Session Activity",
+        "background_color": "vivid_green",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 6370238261408257,
+            "definition": {
+              "title": "Sessions Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Started",
+                      "formula": "started"
+                    },
+                    {
+                      "alias": "Stopped",
+                      "formula": "stopped"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "started",
+                      "data_source": "metrics",
+                      "query": "sum:claude.session.started{$env,$service,$user}.as_count()"
+                    },
+                    {
+                      "name": "stopped",
+                      "data_source": "metrics",
+                      "query": "sum:claude.session.stopped{$env,$service,$user}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 8479914481433056,
+            "definition": {
+              "title": "Sessions by Interface",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "sessions",
+                      "data_source": "metrics",
+                      "query": "sum:claude.session.started{$env,$service,$user} by {interface}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "sessions"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "style": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 3765240481684099,
+      "definition": {
+        "title": "Tool Usage",
+        "background_color": "vivid_orange",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 8547687056906941,
+            "definition": {
+              "title": "Tool Calls Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Calls",
+                      "formula": "calls"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "calls",
+                      "data_source": "metrics",
+                      "query": "sum:claude.tool.calls{$env,$service,$user} by {tool_name}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 4677157949296057,
+            "definition": {
+              "title": "Most Used Tools",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "calls",
+                      "data_source": "metrics",
+                      "query": "sum:claude.tool.calls{$env,$service,$user} by {tool_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "calls"
+                    }
+                  ],
+                  "sort": {
+                    "count": 15,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": 1296303078202382,
+            "definition": {
+              "title": "Tools by Source App",
+              "type": "treemap",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "calls",
+                      "data_source": "metrics",
+                      "query": "sum:claude.tool.calls{$env,$service,$user} by {source_app,tool_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "calls"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 8720340594775204,
+      "definition": {
+        "title": "Subagent Performance",
+        "background_color": "vivid_purple",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 8058758920401301,
+            "definition": {
+              "title": "Subagents Spawned Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Spawned",
+                      "formula": "spawned"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "spawned",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.spawned{$env,$service,$user} by {agent_type}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 4627754394831718,
+            "definition": {
+              "title": "Most Spawned Agent Types",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "spawned",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.spawned{$env,$service,$user} by {agent_type}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "spawned"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": 6560148507112749,
+            "definition": {
+              "title": "Subagent Duration by Type",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "min",
+                "max",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Duration (s)",
+                      "formula": "duration / 1000"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "duration",
+                      "data_source": "metrics",
+                      "query": "avg:claude.subagent.duration_ms{$env,$service,$user} by {agent_type}"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "line"
+                }
+              ]
+            }
+          },
+          {
+            "id": 7086295066732203,
+            "definition": {
+              "title": "Tool Use per Subagent",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Avg Tools",
+                      "formula": "tool_use"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "tool_use",
+                      "data_source": "metrics",
+                      "query": "avg:claude.subagent.tool_use_count{$env,$service,$user} by {agent_type}"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 4403868683244495,
+      "definition": {
+        "title": "Skill Usage",
+        "background_color": "white",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 344492850620875,
+            "definition": {
+              "title": "Skill Invocations Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Invocations",
+                      "formula": "invocations"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "invocations",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user} by {skill_name}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 3752255583725308,
+            "definition": {
+              "title": "Most Used Skills",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "invocations",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user} by {skill_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "invocations"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": 1678275740911782,
+            "definition": {
+              "title": "Workflow Triggers Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Triggers",
+                      "formula": "triggers"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "triggers",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.workflow.triggered{$env,$service,$user} by {workflow_name}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 4073487987290595,
+            "definition": {
+              "title": "Workflows by Skill",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "triggers",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.workflow.triggered{$env,$service,$user} by {skill_name,workflow_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "triggers"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": 2801442954521355,
+            "definition": {
+              "title": "Skills by Category",
+              "type": "treemap",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "invocations",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user} by {skill_category,skill_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "invocations"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 3152991691316865,
+            "definition": {
+              "title": "Skills by Interface",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "invocations",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user} by {interface}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "invocations"
+                    }
+                  ],
+                  "sort": {
+                    "count": 5,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 5786355019625676,
+      "definition": {
+        "title": "Token Consumption",
+        "background_color": "vivid_yellow",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 6518603363488893,
+            "definition": {
+              "title": "Token Usage Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "horizontal",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Input",
+                      "formula": "input"
+                    },
+                    {
+                      "alias": "Output",
+                      "formula": "output"
+                    },
+                    {
+                      "alias": "Cache Read",
+                      "formula": "cache_read"
+                    },
+                    {
+                      "alias": "Cache Created",
+                      "formula": "cache_created"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "input",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.input{$env,$service,$user}"
+                    },
+                    {
+                      "name": "output",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.output{$env,$service,$user}"
+                    },
+                    {
+                      "name": "cache_read",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.cache_read{$env,$service,$user}"
+                    },
+                    {
+                      "name": "cache_created",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.cache_created{$env,$service,$user}"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "area"
+                }
+              ]
+            }
+          },
+          {
+            "id": 8009877789237716,
+            "definition": {
+              "title": "Tokens by Agent Type",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "tokens",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.total{$env,$service,$user} by {agent_type}",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "tokens"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": 1206919140564084,
+            "definition": {
+              "title": "Cache Efficiency Over Time",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Cache Hit %",
+                      "formula": "(cache_read / (input + cache_read)) * 100"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "cache_read",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.cache_read{$env,$service,$user}"
+                    },
+                    {
+                      "name": "input",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.input{$env,$service,$user}"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "green",
+                    "line_type": "solid",
+                    "line_width": "thick"
+                  },
+                  "display_type": "line"
+                }
+              ],
+              "yaxis": {
+                "min": "0",
+                "max": "100"
+              }
+            }
+          },
+          {
+            "id": 318680260673296,
+            "definition": {
+              "title": "Input/Output Ratio",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Input/Output",
+                      "formula": "input / output"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "input",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.input{$env,$service,$user}"
+                    },
+                    {
+                      "name": "output",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.output{$env,$service,$user}"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "orange",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "line"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 675059873901807,
+      "definition": {
+        "title": "Event Analytics",
+        "background_color": "vivid_pink",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 7638308731653387,
+            "definition": {
+              "title": "Events by Type",
+              "title_size": "16",
+              "title_align": "left",
+              "show_legend": true,
+              "legend_layout": "auto",
+              "legend_columns": [
+                "avg",
+                "sum",
+                "value"
+              ],
+              "type": "timeseries",
+              "requests": [
+                {
+                  "formulas": [
+                    {
+                      "alias": "Events",
+                      "formula": "events"
+                    }
+                  ],
+                  "queries": [
+                    {
+                      "name": "events",
+                      "data_source": "metrics",
+                      "query": "sum:claude.events.total{$env,$service,$user} by {hook_event_type}.as_count()"
+                    }
+                  ],
+                  "response_format": "timeseries",
+                  "style": {
+                    "palette": "dog_classic",
+                    "line_type": "solid",
+                    "line_width": "normal"
+                  },
+                  "display_type": "bars"
+                }
+              ]
+            }
+          },
+          {
+            "id": 1657190955552774,
+            "definition": {
+              "title": "Event Distribution",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "toplist",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "events",
+                      "data_source": "metrics",
+                      "query": "sum:claude.events.total{$env,$service,$user} by {hook_event_type}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "events"
+                    }
+                  ],
+                  "sort": {
+                    "count": 10,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 5421010586037203,
+      "definition": {
+        "title": "Detailed Tables",
+        "background_color": "gray",
+        "show_title": true,
+        "type": "group",
+        "layout_type": "ordered",
+        "widgets": [
+          {
+            "id": 5668744883177697,
+            "definition": {
+              "title": "Tool Calls Detail",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_table",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "calls",
+                      "data_source": "metrics",
+                      "query": "sum:claude.tool.calls{$env,$service,$user} by {tool_name,source_app}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "sort": {
+                    "count": 25,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  },
+                  "formulas": [
+                    {
+                      "formula": "calls",
+                      "cell_display_mode": "bar"
+                    }
+                  ]
+                }
+              ],
+              "has_search_bar": "auto"
+            }
+          },
+          {
+            "id": 841844319985534,
+            "definition": {
+              "title": "Subagent Performance",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_table",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "spawned",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.spawned{$env,$service,$user} by {agent_type}.as_count()",
+                      "aggregator": "sum"
+                    },
+                    {
+                      "name": "duration",
+                      "data_source": "metrics",
+                      "query": "avg:claude.subagent.duration_ms{$env,$service,$user} by {agent_type}",
+                      "aggregator": "avg"
+                    },
+                    {
+                      "name": "tokens",
+                      "data_source": "metrics",
+                      "query": "sum:claude.subagent.tokens.total{$env,$service,$user} by {agent_type}",
+                      "aggregator": "sum"
+                    },
+                    {
+                      "name": "tool_use",
+                      "data_source": "metrics",
+                      "query": "avg:claude.subagent.tool_use_count{$env,$service,$user} by {agent_type}",
+                      "aggregator": "avg"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "formulas": [
+                    {
+                      "formula": "spawned",
+                      "alias": "Count"
+                    },
+                    {
+                      "formula": "duration / 1000",
+                      "alias": "Avg Duration (s)"
+                    },
+                    {
+                      "formula": "tokens",
+                      "alias": "Total Tokens"
+                    },
+                    {
+                      "formula": "tool_use",
+                      "alias": "Avg Tools"
+                    }
+                  ]
+                }
+              ],
+              "has_search_bar": "auto"
+            }
+          },
+          {
+            "id": 8519464009203551,
+            "definition": {
+              "title": "Skill Usage Detail",
+              "title_size": "16",
+              "title_align": "left",
+              "type": "query_table",
+              "requests": [
+                {
+                  "queries": [
+                    {
+                      "name": "invocations",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.invoked{$env,$service,$user} by {skill_name,skill_category}.as_count()",
+                      "aggregator": "sum"
+                    },
+                    {
+                      "name": "workflows",
+                      "data_source": "metrics",
+                      "query": "sum:claude.skill.workflow.triggered{$env,$service,$user} by {skill_name}.as_count()",
+                      "aggregator": "sum"
+                    }
+                  ],
+                  "response_format": "scalar",
+                  "sort": {
+                    "count": 25,
+                    "order_by": [
+                      {
+                        "type": "formula",
+                        "index": 0,
+                        "order": "desc"
+                      }
+                    ]
+                  },
+                  "formulas": [
+                    {
+                      "formula": "invocations",
+                      "alias": "Invocations",
+                      "cell_display_mode": "bar"
+                    },
+                    {
+                      "formula": "workflows",
+                      "alias": "Workflows"
+                    }
+                  ]
+                }
+              ],
+              "has_search_bar": "auto"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": 3004379477741488,
+      "definition": {
+        "type": "note",
+        "content": "## PAI / Claude Code Telemetry\n\n### Sections\n1. **Overview** - Key metrics at a glance\n2. **Session Activity** - Session lifecycle patterns\n3. **Tool Usage** - Tool utilization breakdown\n4. **Subagent Performance** - Multi-agent orchestration\n5. **Skill Usage** - Skill invocations and workflow triggers\n6. **Token Consumption** - Cost optimization insights\n7. **Event Analytics** - Hook event flow\n8. **Detailed Tables** - Raw data exploration\n\n### Key Metrics\n- **Cache Hit Rate**: >50% target, >80% excellent\n- **Avg Duration**: Monitor for anomalies\n- **Tokens/Tool Use**: Lower = more efficient\n- **Skills**: Track which skills are most used\n\n### Template Variables\n- `$env` - Filter by environment\n- `$service` - Filter by service\n- `$user` - Filter by user",
+        "background_color": "white",
+        "font_size": "14",
+        "text_align": "left",
+        "vertical_align": "top",
+        "show_tick": false,
+        "tick_pos": "50%",
+        "tick_edge": "left",
+        "has_padding": true
+      }
+    }
+  ],
+  "template_variables": [
+    {
+      "name": "env",
+      "prefix": "env",
+      "available_values": [],
+      "default": "*"
+    },
+    {
+      "name": "service",
+      "prefix": "service",
+      "available_values": [],
+      "default": "claude-code"
+    },
+    {
+      "name": "user",
+      "prefix": "user",
+      "available_values": [],
+      "default": "*"
+    }
+  ],
+  "layout_type": "ordered",
+  "notify_list": [],
+  "pause_auto_refresh": false,
+  "reflow_type": "auto",
+  "tags": [
+    "team:pai"
+  ]
+}

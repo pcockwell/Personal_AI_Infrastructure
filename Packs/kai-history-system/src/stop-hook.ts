@@ -139,7 +139,7 @@ async function main() {
       process.exit(0);
     }
 
-    const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+    const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
     const historyDir = join(paiDir, 'history');
 
     const isLearning = hasLearningIndicators(response);

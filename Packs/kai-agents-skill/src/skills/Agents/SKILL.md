@@ -80,10 +80,11 @@ The Agents skill provides complete agent composition and management:
 
 ## Workflow Routing
 
-**Available Workflows:**
-- **CREATECUSTOMAGENT** - Create specialized custom agents -> `Workflows/CreateCustomAgent.md`
-- **LISTTRAITS** - Show available agent traits -> `Workflows/ListTraits.md`
-- **SPAWNPARALLEL** - Launch parallel agents -> `Workflows/SpawnParallelAgents.md`
+| Workflow | Trigger | File |
+|----------|---------|------|
+| **CreateCustomAgent** | "create custom agents", "spin up custom agents" | `Workflows/CreateCustomAgent.md` |
+| **ListTraits** | "list traits", "available traits", "show traits" | `Workflows/ListTraits.md` |
+| **SpawnParallelAgents** | "launch parallel agents", "parallel agents" | `Workflows/SpawnParallelAgents.md` |
 
 ## Route Triggers
 
@@ -136,3 +137,29 @@ The skill routes to appropriate workflow automatically.
 | Grunt work | `haiku` | 10-20x faster |
 | Standard analysis | `sonnet` | Balanced |
 | Deep reasoning | `opus` | Maximum intelligence |
+
+## Examples
+
+**Example 1: Create custom agents for code review**
+```
+User: "Spin up 3 custom agents to review this PR"
+→ Invokes CreateCustomAgent workflow
+→ Executes AgentFactory.ts with different traits for each
+→ Launches agents with unique voices and perspectives
+```
+
+**Example 2: List available traits**
+```
+User: "What agent traits are available?"
+→ Invokes ListTraits workflow
+→ Shows EXPERTISE, PERSONALITY, and APPROACH categories
+→ Returns trait names and descriptions
+```
+
+**Example 3: Parallel agent orchestration**
+```
+User: "Launch parallel agents to analyze this architecture"
+→ Invokes SpawnParallelAgents workflow
+→ Creates agents with complementary trait combinations
+→ Aggregates results from all agents
+```

@@ -68,12 +68,12 @@ After all installation steps complete:
 1. Run UpdateDocumentation workflow
 2. Log the pack installation
 3. Verify the pack appears in Architecture.md
+```
 
-\`\`\`bash
+```bash
 # Auto-run after pack installation
 bun run $PAI_DIR/Tools/PaiArchitecture.ts log-upgrade "Installed [pack-name] v[version]" pack
 bun run $PAI_DIR/Tools/PaiArchitecture.ts generate
-\`\`\`
 ```
 
 ## Example Output
@@ -86,5 +86,4 @@ bun run $PAI_DIR/Tools/PaiArchitecture.ts generate
   - Verified system health
 ✅ RESULTS: Architecture.md now shows 4 packs, 1 bundle
 📊 STATUS: All systems healthy
-🎯 COMPLETED: Architecture updated - 4 packs installed, all healthy.
 ```

@@ -1,4 +1,3 @@
-// $PAI_DIR/observability/apps/server/src/file-ingest.ts
 // File-based event streaming - watches JSONL files
 
 import { watch, existsSync } from 'fs';

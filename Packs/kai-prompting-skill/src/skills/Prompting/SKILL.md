@@ -63,22 +63,22 @@ bun run $PAI_DIR/skills/Prompting/Tools/ValidateTemplate.ts \
 **Example 1: Generate agent roster**
 ```
 User: "Generate a roster from my agents.yaml"
--> Uses RenderTemplate with Roster.hbs
--> Outputs formatted agent definitions
+→ Uses RenderTemplate with Roster.hbs
+→ Outputs formatted agent definitions
 ```
 
 **Example 2: Create briefing for research agent**
 ```
 User: "Brief the research agent on this task"
--> Uses RenderTemplate with Briefing.hbs
--> Generates complete agent context handoff
+→ Uses RenderTemplate with Briefing.hbs
+→ Generates complete agent context handoff
 ```
 
 **Example 3: Validate template syntax**
 ```
 User: "Check my new template for errors"
--> Uses ValidateTemplate
--> Reports syntax issues, missing variables
+→ Uses ValidateTemplate
+→ Reports syntax issues, missing variables
 ```
 
 ## Best Practices

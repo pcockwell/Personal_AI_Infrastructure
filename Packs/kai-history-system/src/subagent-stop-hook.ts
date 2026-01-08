@@ -121,7 +121,7 @@ async function captureAgentOutput(
   taskOutput: string,
   transcriptPath: string
 ) {
-  const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+  const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
   const historyDir = join(paiDir, 'history');
 
   const now = new Date();

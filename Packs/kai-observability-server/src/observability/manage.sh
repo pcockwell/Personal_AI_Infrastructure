@@ -1,11 +1,9 @@
 #!/bin/bash
-# $PAI_DIR/observability/manage.sh
 # Observability Dashboard Manager
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Ensure bun is in PATH
-# Only add Homebrew path if it exists (macOS-specific)
 if [ -d "/opt/homebrew/bin" ]; then
   export PATH="$HOME/.bun/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 else

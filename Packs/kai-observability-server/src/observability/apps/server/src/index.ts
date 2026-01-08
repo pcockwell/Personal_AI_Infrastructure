@@ -1,4 +1,3 @@
-// $PAI_DIR/observability/apps/server/src/index.ts
 // HTTP + WebSocket server for observability dashboard
 
 import { startFileIngestion, getRecentEvents, getFilterOptions } from './file-ingest';

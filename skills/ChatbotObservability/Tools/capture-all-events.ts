@@ -1,0 +1,1 @@
+/Users/pcockwell/.claude/hooks/capture-all-events.ts

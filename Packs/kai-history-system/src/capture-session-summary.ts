@@ -47,7 +47,7 @@ function determineSessionFocus(filesChanged: string[], commandsExecuted: string[
 }
 
 async function analyzeSession(conversationId: string, yearMonth: string): Promise<any> {
-  const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+  const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
   const rawOutputsDir = join(paiDir, 'history', 'raw-outputs', yearMonth);
 
   let filesChanged: string[] = [];
@@ -96,7 +96,7 @@ async function main() {
     if (!input.trim()) process.exit(0);
 
     const data: SessionData = JSON.parse(input);
-    const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+    const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
     const historyDir = join(paiDir, 'history');
 
     const now = new Date();

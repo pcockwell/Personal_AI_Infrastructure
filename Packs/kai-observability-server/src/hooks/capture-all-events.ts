@@ -1,11 +1,33 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 // $PAI_DIR/hooks/capture-all-events.ts
 // Captures ALL Claude Code hook events to JSONL
+//
+// Usage:
+//   Normal (writes to file):     echo '{"session_id":"..."}' | npx tsx capture-all-events.ts --event-type PreToolUse
+//   Chatbot (stdout JSON):       echo '{"session_id":"..."}' | npx tsx capture-all-events.ts --event-type PreToolUse --stdout-json
 
 import { readFileSync, appendFileSync, mkdirSync, existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { enrichEventWithAgentMetadata, isAgentSpawningCall } from './lib/metadata-extraction';
+
+/**
+ * Read all stdin as text (Node.js compatible replacement for Bun.stdin.text())
+ */
+function readStdin(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    process.stdin.setEncoding('utf-8');
+    process.stdin.on('readable', () => {
+      let chunk;
+      while ((chunk = process.stdin.read()) !== null) {
+        data += chunk;
+      }
+    });
+    process.stdin.on('end', () => resolve(data));
+    process.stdin.on('error', reject);
+  });
+}
 
 interface HookEvent {
   source_app: string;
@@ -35,7 +57,7 @@ function getLocalTimestamp(): string {
 }
 
 function getEventsFilePath(): string {
-  const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+  const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
   const now = new Date();
   const tz = process.env.TIME_ZONE || Intl.DateTimeFormat().resolvedOptions().timeZone;
   const localDate = new Date(now.toLocaleString('en-US', { timeZone: tz }));
@@ -54,7 +76,7 @@ function getEventsFilePath(): string {
 }
 
 function getSessionMappingFile(): string {
-  const paiDir = process.env.PAI_DIR || join(homedir(), '.config', 'pai');
+  const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
   return join(paiDir, 'agent-sessions.json');
 }
 
@@ -91,6 +113,7 @@ async function main() {
   try {
     const args = process.argv.slice(2);
     const eventTypeIndex = args.indexOf('--event-type');
+    const stdoutJson = args.includes('--stdout-json');
 
     if (eventTypeIndex === -1) {
       console.error('Missing --event-type argument');
@@ -98,25 +121,27 @@ async function main() {
     }
 
     const eventType = args[eventTypeIndex + 1];
-    const stdinData = await Bun.stdin.text();
+    const stdinData = await readStdin();
     const hookData = JSON.parse(stdinData);
 
     const sessionId = hookData.session_id || 'main';
     let agentName = getAgentForSession(sessionId);
 
-    // Update agent mapping based on event type
-    if (hookData.tool_name === 'Task' && hookData.tool_input?.subagent_type) {
-      agentName = hookData.tool_input.subagent_type;
-      setAgentForSession(sessionId, agentName);
-    } else if (eventType === 'SubagentStop' || eventType === 'Stop') {
-      agentName = process.env.DA || 'main';
-      setAgentForSession(sessionId, agentName);
-    } else if (process.env.CLAUDE_CODE_AGENT) {
-      agentName = process.env.CLAUDE_CODE_AGENT;
-      setAgentForSession(sessionId, agentName);
-    } else if (hookData.agent_type) {
-      agentName = hookData.agent_type;
-      setAgentForSession(sessionId, agentName);
+    // Update agent mapping based on event type (skip for stdout-json mode)
+    if (!stdoutJson) {
+      if (hookData.tool_name === 'Task' && hookData.tool_input?.subagent_type) {
+        agentName = hookData.tool_input.subagent_type;
+        setAgentForSession(sessionId, agentName);
+      } else if (eventType === 'SubagentStop' || eventType === 'Stop') {
+        agentName = process.env.DA || 'main';
+        setAgentForSession(sessionId, agentName);
+      } else if (process.env.CLAUDE_CODE_AGENT) {
+        agentName = process.env.CLAUDE_CODE_AGENT;
+        setAgentForSession(sessionId, agentName);
+      } else if (hookData.agent_type) {
+        agentName = hookData.agent_type;
+        setAgentForSession(sessionId, agentName);
+      }
     }
 
     let event: HookEvent = {
@@ -133,10 +158,16 @@ async function main() {
       event = enrichEventWithAgentMetadata(event, hookData.tool_input, hookData.description);
     }
 
-    // Append to events file
-    const eventsFile = getEventsFilePath();
-    const jsonLine = JSON.stringify(event) + '\n';
-    appendFileSync(eventsFile, jsonLine, 'utf-8');
+    const jsonLine = JSON.stringify(event);
+
+    if (stdoutJson) {
+      // Output to stdout for chatbot workflows
+      console.log(jsonLine);
+    } else {
+      // Normal mode: append to events file
+      const eventsFile = getEventsFilePath();
+      appendFileSync(eventsFile, jsonLine + '\n', 'utf-8');
+    }
 
   } catch (error) {
     console.error('Event capture error:', error);

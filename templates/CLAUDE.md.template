@@ -1,0 +1,170 @@
+# PAI System Context
+
+## Directory Structure
+
+| Directory | Purpose |
+|-----------|---------|
+| `/skills/` | User-defined skills. `CORE/` auto-loads at session start. Projects can have `.claude/skills/` too. |
+| `/history/` | Persistent memory (kai-history-system) |
+| `/hooks/` | Event-driven automation scripts |
+| `/tools/` | Custom PAI tooling |
+| `/agents/` | Custom agent definitions |
+| `/observability/` | Monitoring and metrics |
+
+### History Subdirectories
+- `learnings/YYYY-MM/` - Captured insights and problem-solutions
+- `decisions/` - Architectural decision records
+- `research/` - Investigation outputs
+- `sessions/` - Session summaries
+
+---
+
+## Compiled Directives
+
+> Auto-generated from captured learnings. Last compiled: 2026-01-08T01:16:00-08:00
+
+### Tools
+
+<!-- TOOLS_DIRECTIVES_START -->
+- PREFER AskUserQuestion tool when soliciting user feedback or clarification
+<!-- TOOLS_DIRECTIVES_END -->
+
+### Workflows
+
+<!-- WORKFLOWS_DIRECTIVES_START -->
+- WHEN user says "collect a learning": Save to history/learnings/YYYY-MM/ with kai-history-system format
+- WHEN packaging skills: Use default location (~/.claude/exports/) unless user requests otherwise
+<!-- WORKFLOWS_DIRECTIVES_END -->
+
+### Preferences
+
+<!-- PREFERENCES_DIRECTIVES_START -->
+- FAVOR deterministic scripts in Tools/ over inline code for skill operations
+<!-- PREFERENCES_DIRECTIVES_END -->
+
+### Insights
+
+<!-- INSIGHTS_DIRECTIVES_START -->
+- NOTE: Cache efficiency >50% good, >80% excellent - monitor token consumption patterns
+- NOTE: High input/output token ratio indicates inefficient context usage
+- NOTE: Learning capture is automatic, retrieval is manual - compile regularly to incorporate
+- NOTE: Skills with script dependencies should check script dir first, then PAI_DIR for bundling
+<!-- INSIGHTS_DIRECTIVES_END -->
+
+---
+
+## PAI Tools
+
+**PREFER these deterministic tools over AI-generated solutions to save tokens:**
+
+### SkillSearch
+Search for skills across all levels (project → user). Project skills override user skills.
+
+```bash
+bun run $PAI_DIR/Tools/SkillSearch.ts "<query>"      # Search by keywords
+bun run $PAI_DIR/Tools/SkillSearch.ts --list         # List all skills
+bun run $PAI_DIR/Tools/SkillSearch.ts --user-only "<query>"  # Skip project skills
+```
+
+**Scoring:** +10 name match, +5 trigger match, +2 description match
+
+**Multi-level:** Automatically discovers skills from CWD up to ~/.claude. Project-level skills take priority.
+
+**Use when:** Finding skills for a task, checking available capabilities
+
+### GenerateSkillIndex
+Generate skill-index.json at each level from CWD to ~/.claude.
+
+```bash
+bun run $PAI_DIR/Tools/GenerateSkillIndex.ts              # Auto-detect all levels
+bun run $PAI_DIR/Tools/GenerateSkillIndex.ts --path /dir  # Single directory
+```
+
+**Auto-detect mode:** Walks up from CWD, generates index at each .claude/skills/ with SKILL.md files.
+
+**Use when:** After creating/modifying/deleting skills at any level
+
+### MergeSkillIndexes
+Merge skill indexes from all levels into single output (runtime only, stdout).
+
+```bash
+bun run $PAI_DIR/Tools/MergeSkillIndexes.ts              # Merge from CWD
+bun run $PAI_DIR/Tools/MergeSkillIndexes.ts --from /path # Start from specific dir
+bun run $PAI_DIR/Tools/MergeSkillIndexes.ts --list       # List index locations
+```
+
+**Priority:** Project-level skills override user-level skills of same name.
+
+**Use when:** Programmatically getting merged skill data (SkillSearch uses this internally)
+
+### PaiArchitecture
+Generate architecture documentation and check system health.
+
+```bash
+bun run $PAI_DIR/Tools/PaiArchitecture.ts generate       # Generate Architecture.md
+bun run $PAI_DIR/Tools/PaiArchitecture.ts status         # Show current state (stdout)
+bun run $PAI_DIR/Tools/PaiArchitecture.ts check          # Verify installation health
+bun run $PAI_DIR/Tools/PaiArchitecture.ts log-upgrade "description" [type]
+```
+
+**Types:** pack, config, bundle, plugin
+
+**Use when:** Updating architecture docs, checking PAI health, logging upgrades
+
+### PackageSkill
+Package skills into .skill format (ZIP) for export to Claude.ai.
+
+```bash
+bun run $PAI_DIR/Tools/PackageSkill.ts <skill-name>              # Package single skill
+bun run $PAI_DIR/Tools/PackageSkill.ts <skill-name> --output ./  # Custom output dir
+bun run $PAI_DIR/Tools/PackageSkill.ts --all                     # Package all skills
+bun run $PAI_DIR/Tools/PackageSkill.ts --list                    # List available skills
+bun run $PAI_DIR/Tools/PackageSkill.ts --validate <skill-name>   # Validate only
+bun run $PAI_DIR/Tools/PackageSkill.ts --validate-size <skill-name>  # Check size only
+```
+
+**Features:**
+- Converts PascalCase to kebab-case (Agent Skills spec)
+- Maps directories: Tools → scripts, Workflows → references, Templates → assets
+- Validates frontmatter, path references, and size limits (30MB max)
+- Supports `.skillignore` for excluding files (gitignore syntax)
+
+**Default output:** `~/.claude/exports/`
+
+**Use when:** Exporting skills for Claude.ai, validating skill structure
+
+---
+
+## Automatic Skill Routing
+
+**BEFORE responding to task requests, search for matching skills:**
+
+1. Run SkillSearch with keywords from the user's request:
+   ```bash
+   bun run /Users/pcockwell/.claude/Tools/SkillSearch.ts "<keywords>"
+   ```
+
+2. If a skill matches with score >= 5, invoke it:
+   ```
+   Skill(skill: "<skillName>")
+   ```
+
+3. The invoked skill handles its own internal workflow routing
+
+4. If no skill matches (no results or all scores < 5), proceed normally without mentioning skills
+
+**Examples:**
+| User Request | SkillSearch Query | Result | Action |
+|--------------|-------------------|--------|--------|
+| "create a branch" | "create branch" | GitWorkflow (score: 10+) | `Skill(skill: "GitWorkflow")` |
+| "commit my changes" | "commit changes" | GitWorkflow (score: 5+) | `Skill(skill: "GitWorkflow")` |
+| "canonicalize Agents" | "canonicalize" | CreateSkill (score: 5+) | `Skill(skill: "CreateSkill")` |
+| "refresh skills" | "refresh skills" | CORE (score: 5+) | `Skill(skill: "CORE")` |
+| "what is 2+2" | "math" | (no match) | Proceed normally |
+
+---
+
+## Quick Reference
+
+**Capture a learning:** "collect a learning about [topic]"
+**Compile learnings:** `/compile-learnings`

@@ -1,5 +1,3 @@
-// $PAI_DIR/observability/apps/server/src/types.ts
-
 export interface TodoItem {
   content: string;
   status: 'pending' | 'in_progress' | 'completed';

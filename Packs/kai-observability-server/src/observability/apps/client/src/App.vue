@@ -37,6 +37,12 @@
           <span v-if="event.payload?.tool_input?.command" class="ml-2 font-mono text-xs text-[var(--text-secondary)]">
             {{ truncate(event.payload.tool_input.command, 60) }}
           </span>
+          <span v-else-if="event.payload?.tool_input?.file_path" class="ml-2 font-mono text-xs text-[var(--text-secondary)]">
+            {{ truncate(event.payload.tool_input.file_path, 60) }}
+          </span>
+          <span v-else-if="event.payload?.tool_input?.pattern" class="ml-2 font-mono text-xs text-[var(--text-secondary)]">
+            {{ truncate(event.payload.tool_input.pattern, 60) }}
+          </span>
         </div>
       </div>
     </div>
@@ -103,6 +109,9 @@ function getBorderColor(eventType: string): string {
     'Stop': 'border-[var(--accent-yellow)]',
     'Completed': 'border-[var(--accent-green)]',
     'UserPromptSubmit': 'border-[var(--text-secondary)]',
+    'SessionStart': 'border-purple-500',
+    'SessionEnd': 'border-purple-500',
+    'SubagentStop': 'border-orange-500',
   }
   return colors[eventType] || 'border-[var(--text-secondary)]'
 }
@@ -114,6 +123,7 @@ function formatTime(timestamp?: number): string {
 }
 
 function truncate(str: string, len: number): string {
+  if (!str) return ''
   if (str.length <= len) return str
   return str.slice(0, len) + '...'
 }

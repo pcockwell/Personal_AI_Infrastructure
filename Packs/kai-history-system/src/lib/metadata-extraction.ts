@@ -1,5 +1,6 @@
+#!/usr/bin/env bun
 // $PAI_DIR/hooks/lib/metadata-extraction.ts
-// Extract agent instance metadata from Task tool calls
+// Extracts agent instance metadata from Task tool calls
 
 export interface AgentInstanceMetadata {
   agent_instance_id?: string;
@@ -41,7 +42,20 @@ export function extractAgentInstanceId(
     }
   }
 
-  // Strategy 3: Fallback to subagent_type
+  // Strategy 3: Extract parent session from prompt
+  if (toolInput?.prompt && typeof toolInput.prompt === 'string') {
+    const parentSessionMatch = toolInput.prompt.match(/\[PARENT_SESSION:\s*([^\]]+)\]/);
+    if (parentSessionMatch) {
+      result.parent_session_id = parentSessionMatch[1].trim();
+    }
+
+    const parentTaskMatch = toolInput.prompt.match(/\[PARENT_TASK:\s*([^\]]+)\]/);
+    if (parentTaskMatch) {
+      result.parent_task_id = parentTaskMatch[1].trim();
+    }
+  }
+
+  // Strategy 4: Fallback to subagent_type
   if (!result.agent_type && toolInput?.subagent_type) {
     result.agent_type = toolInput.subagent_type;
   }
@@ -63,6 +77,8 @@ export function enrichEventWithAgentMetadata(
   if (metadata.agent_instance_id) enrichedEvent.agent_instance_id = metadata.agent_instance_id;
   if (metadata.agent_type) enrichedEvent.agent_type = metadata.agent_type;
   if (metadata.instance_number !== undefined) enrichedEvent.instance_number = metadata.instance_number;
+  if (metadata.parent_session_id) enrichedEvent.parent_session_id = metadata.parent_session_id;
+  if (metadata.parent_task_id) enrichedEvent.parent_task_id = metadata.parent_task_id;
 
   return enrichedEvent;
 }

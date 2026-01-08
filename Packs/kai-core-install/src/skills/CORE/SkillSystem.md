@@ -71,6 +71,42 @@ SkillName/
     └── Create.md
 ```
 
+## Size Management
+
+### Size Limits
+- **Maximum size:** 30 MB (before compression)
+- **Warning threshold:** 25 MB
+
+### Default Exclusions
+The packaging system automatically excludes:
+- `node_modules/`, `vendor/`, `bower_components/`
+- `dist/`, `build/`, `out/`, `target/`
+- `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`
+- `coverage/`, `.nyc_output/`
+- `.env`, `*.pem`, `*.key`, `credentials.json`
+- Lock files (`package-lock.json`, `yarn.lock`, etc.)
+
+### Custom Exclusions (.skillignore)
+Create a `.skillignore` file in the skill root to add custom patterns:
+
+```
+SkillName/
+├── SKILL.md
+├── .skillignore        # Custom exclusion patterns
+├── Tools/
+└── Workflows/
+```
+
+**Format:** Gitignore-compatible syntax
+
+```
+# Example .skillignore
+data/models/          # Large ML models
+assets/videos/        # Video files
+*.mp4
+*.zip
+```
+
 ## Complete Checklist
 
 - [ ] Skill directory uses TitleCase
@@ -80,3 +116,4 @@ SkillName/
 - [ ] `## Examples` section with 2-3 usage patterns
 - [ ] `Tools/` directory exists (even if empty)
 - [ ] All workflow files use TitleCase
+- [ ] Package size under 30 MB (use `.skillignore` if needed)

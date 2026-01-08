@@ -6,13 +6,13 @@
  * tracking all installed packs, bundles, plugins, and upgrades.
  *
  * Usage:
- *   bun $PAI_DIR/tools/PaiArchitecture.ts generate    # Generate/refresh Architecture.md
- *   bun $PAI_DIR/tools/PaiArchitecture.ts status      # Show current state (stdout)
- *   bun $PAI_DIR/tools/PaiArchitecture.ts check       # Verify installation health
- *   bun $PAI_DIR/tools/PaiArchitecture.ts log-upgrade "description"  # Add upgrade entry
+ *   bun PaiArchitecture.ts generate    # Generate/refresh Architecture.md
+ *   bun PaiArchitecture.ts status      # Show current state (stdout)
+ *   bun PaiArchitecture.ts check       # Verify installation health
+ *   bun PaiArchitecture.ts log-upgrade "description"  # Add upgrade entry
  */
 
-import { readdir, readFile, writeFile, appendFile } from 'fs/promises';
+import { readdir, readFile, writeFile, appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
@@ -110,6 +110,15 @@ async function checkSystemHealth(): Promise<Record<string, string>> {
     health['Skills'] = '✗ Not installed';
   }
 
+  // Check tools
+  const toolsDir = join(PAI_DIR, 'Tools');
+  if (existsSync(toolsDir)) {
+    const tools = (await readdir(toolsDir)).filter(f => f.endsWith('.ts'));
+    health['Tools'] = `✓ ${tools.length} available`;
+  } else {
+    health['Tools'] = '✗ Not installed';
+  }
+
   return health;
 }
 
@@ -137,7 +146,7 @@ async function generateArchitectureMd(): Promise<string> {
 
 | Pack | Version | Status |
 |------|---------|--------|
-${packs.map(p => `| ${p.name} | ${p.version} | ${p.status} |`).join('\n')}
+${packs.map(p => `| ${p.name} | ${p.version} | ${p.status} |`).join('\n') || '| - | - | No packs installed |'}
 
 ## Upgrade History
 
@@ -160,13 +169,12 @@ ${Object.entries(health).map(([k, v]) => `- **${k}:** ${v}`).join('\n')}
 async function logUpgrade(description: string, type: string = 'pack'): Promise<void> {
   const entry: UpgradeEntry = {
     date: new Date().toISOString().split('T')[0],
-    type: type as any,
+    type: type as UpgradeEntry['type'],
     description
   };
 
   const dir = join(PAI_DIR, 'history');
   if (!existsSync(dir)) {
-    const { mkdir } = await import('fs/promises');
     await mkdir(dir, { recursive: true });
   }
 
@@ -199,7 +207,7 @@ async function main() {
 
     case 'log-upgrade':
       if (!args[1]) {
-        console.error('Usage: PaiArchitecture.ts log-upgrade "description"');
+        console.error('Usage: PaiArchitecture.ts log-upgrade "description" [type]');
         process.exit(1);
       }
       await logUpgrade(args[1], args[2] || 'pack');
