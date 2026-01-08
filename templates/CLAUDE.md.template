@@ -34,6 +34,7 @@
 <!-- WORKFLOWS_DIRECTIVES_START -->
 - WHEN user says "collect a learning": Save to history/learnings/YYYY-MM/ with kai-history-system format
 - WHEN packaging skills: Use default location (~/.claude/exports/) unless user requests otherwise
+- WHEN a task matches a skill's triggers: INVOKE the skill, not manual steps
 <!-- WORKFLOWS_DIRECTIVES_END -->
 
 ### Preferences
