@@ -21,7 +21,7 @@
 
 ## Compiled Directives
 
-> Auto-generated from captured learnings. Last compiled: 2026-01-08T01:16:00-08:00
+> Auto-generated from captured learnings. Last compiled: 2026-01-08T10:10:00-08:00
 
 ### Tools
 
@@ -32,9 +32,10 @@
 ### Workflows
 
 <!-- WORKFLOWS_DIRECTIVES_START -->
-- WHEN user says "collect a learning": Save to history/learnings/YYYY-MM/ with kai-history-system format
-- WHEN packaging skills: Use default location (~/.claude/exports/) unless user requests otherwise
+- WHEN receiving task requests: Run SkillSearch FIRST with task keywords. If score >= 5, invoke skill
 - WHEN a task matches a skill's triggers: INVOKE the skill, not manual steps
+- WHEN packaging skills: Use default location (~/.claude/exports/) unless user requests otherwise
+- WHEN user says "collect a learning": Save to history/learnings/YYYY-MM/ with kai-history-system format
 <!-- WORKFLOWS_DIRECTIVES_END -->
 
 ### Preferences
@@ -46,9 +47,9 @@
 ### Insights
 
 <!-- INSIGHTS_DIRECTIVES_START -->
+- NOTE: Learning capture is automatic, retrieval is manual - compile regularly to incorporate
 - NOTE: Cache efficiency >50% good, >80% excellent - monitor token consumption patterns
 - NOTE: High input/output token ratio indicates inefficient context usage
-- NOTE: Learning capture is automatic, retrieval is manual - compile regularly to incorporate
 - NOTE: Skills with script dependencies should check script dir first, then PAI_DIR for bundling
 <!-- INSIGHTS_DIRECTIVES_END -->
 
