@@ -1,0 +1,15 @@
+# PAI (Personal AI Infrastructure) - Claude Code Log Tailing
+# Tails existing JSONL files for log ingestion into Datadog
+#
+# These logs contain all Claude Code hook events for detailed analysis.
+
+logs:
+  # All Claude Code hook events (detailed telemetry)
+  - type: file
+    path: /Users/pcockwell/.claude/history/raw-outputs/*/*.jsonl
+    source: pai
+    service: claude-code
+    tags:
+      - env:development
+      - user:pcockwell
+      - component:hooks

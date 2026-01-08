@@ -1,0 +1,20 @@
+## PAI Metrics - Unified check for all Claude Code/PAI metrics
+##
+## This check processes raw hook events from ~/.claude/history/raw-outputs/
+## and submits comprehensive telemetry metrics to Datadog.
+##
+## Metrics:
+##   - claude.session.started/stopped (COUNT)
+##   - claude.tool.calls (COUNT)
+##   - claude.subagent.spawned (COUNT)
+##   - claude.subagent.duration_ms (GAUGE)
+##   - claude.subagent.tokens.* (GAUGE)
+##   - claude.events.total (COUNT)
+
+init_config:
+
+instances:
+  ## @param min_collection_interval - number - optional - default: 15
+  ## The minimum collection interval for this check instance (in seconds).
+  ## Set to 300 (5 minutes) for production use.
+  - min_collection_interval: 300
