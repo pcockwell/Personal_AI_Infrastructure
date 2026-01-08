@@ -59,6 +59,38 @@ git log -1 --oneline
 git status
 ```
 
+### Step 6: Offer to Push
+
+After successful commit, ask the user if they want to push:
+
+**Use AskUserQuestion:**
+- Question: "Would you like to push this commit to the remote?"
+- Options:
+  - "Yes, push now" - Push to origin
+  - "No, I'll push later" - End workflow
+
+If user selects "Yes":
+
+First, check if remote branch exists:
+```bash
+git ls-remote --heads origin $(git branch --show-current)
+```
+
+If remote branch exists:
+```bash
+git push origin $(git branch --show-current)
+```
+
+If remote branch doesn't exist (set upstream):
+```bash
+git push -u origin $(git branch --show-current)
+```
+
+Verify push success:
+```bash
+git status
+```
+
 ## Amend Rules
 
 Only use `git commit --amend` when ALL conditions are met:
@@ -76,3 +108,5 @@ If already pushed, create a new commit instead.
 - [ ] Staged appropriate changes
 - [ ] Wrote descriptive commit message
 - [ ] Verified commit succeeded
+- [ ] Offered to push changes
+- [ ] Pushed if user confirmed

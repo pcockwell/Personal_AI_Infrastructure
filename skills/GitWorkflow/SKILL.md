@@ -46,13 +46,15 @@ User: "Create a branch for adding dark mode"
 -> Switches to new branch
 ```
 
-**Example 2: Commit with protection check**
+**Example 2: Commit with protection check and push prompt**
 ```
 User: "Commit these changes"
 -> Invokes Commit workflow
 -> Checks current branch (main)
 -> Asks for confirmation (protected branch)
 -> User confirms -> proceeds with commit
+-> Asks "Would you like to push?"
+-> User confirms -> pushes to remote
 ```
 
 **Example 3: Sync feature branch with main**
